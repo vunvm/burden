@@ -6,6 +6,7 @@ import {
     getListUsersController,
     updateUserController,
     inactiveUserController,
+    getCurrentUserController,
 } from "../controllers/user.controller.js";
 import { authJWT } from "../middlewares/auth.middleware.js";
 
@@ -13,6 +14,7 @@ const userRouter = express.Router();
 
 userRouter.get("/users", getListUsersController);
 userRouter.get("/users/:id", getUserDetailController);
+userRouter.get("/users/current", authJWT, getCurrentUserController);
 
 userRouter.post("/users/login", loginController);
 userRouter.post("/users", addUserController);

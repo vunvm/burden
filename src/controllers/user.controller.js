@@ -86,6 +86,14 @@ const inactiveUserController = async (req, res, next) => {
     }
 };
 
+const getCurrentUserController = async (req, res, next) => {
+    try {
+        return res.status(httpStatus.OK).json(req.user);
+    } catch (error) {
+        next(error);
+    }
+};
+
 export {
     loginController,
     addUserController,
@@ -93,4 +101,5 @@ export {
     getListUsersController,
     updateUserController,
     inactiveUserController,
+    getCurrentUserController,
 };

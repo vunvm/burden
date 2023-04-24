@@ -7,11 +7,28 @@ import {
 } from "../services/car.service.js";
 import httpStatus from "http-status";
 import config from "../config/index.js";
+import XLSX from "xlsx";
 
 const addCarController = async (req, res, next) => {
     try {
         const createdCarId = await addCar(req.body);
         return res.status(httpStatus.CREATED).json(createdCarId);
+    } catch (error) {
+        next(error);
+    }
+};
+
+const uploadCarsController = async (req, res, next) => {
+    try {
+        const workbook = XLSX.read(req.file.buffer);
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const cars = XLSX.utils.sheet_to_json(sheet);
+
+        for (let car of cars) {
+            await addCar(car);
+        }
+        res.status(httpStatus.CREATED).json("OK");
     } catch (error) {
         next(error);
     }
@@ -66,4 +83,5 @@ export {
     getListCarsController,
     updateCarController,
     deleteCarController,
+    uploadCarsController,
 };
