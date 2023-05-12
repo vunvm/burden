@@ -19,28 +19,22 @@ app.use(express.urlencoded({ extended: false }));
 app.use(morgan(config.morgan_format));
 
 const initService = () => {
-    console.log("Init - Register services.");
     app.use("/api/v1", routers);
 
     // Init api documents
     app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-    console.log(`Init - Register services successfully.`);
 };
 
 const initSequelize = () => {
     sequelize
         .authenticate()
-        .then(() => {
-            console.log("Init - Establish connection successfully.");
-        })
-        .catch((err) => {
-            console.log("Init - Establish connection fail:", err);
-        });
+        .then(() => {})
+        .catch((err) => {});
 };
 
 const handleError = () => {
     // if error is not an instanceOf APIError, convert it.
-    // app.use(converter);
+    app.use(converter);
 
     // catch 404 and forward to error handler
     app.use(notFound);
@@ -48,7 +42,6 @@ const handleError = () => {
 
 const startServer = async () => {
     app.listen(config.port, config.host);
-    console.log(`Listening on host ${config.host} on port ${config.port} `);
 };
 
 getEnvironmentSetting()

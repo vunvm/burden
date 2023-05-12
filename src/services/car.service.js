@@ -11,9 +11,9 @@ const addCar = async (payload) => {
     return new ApiDataResponse(httpStatus.CREATED, "create success", newCar);
 };
 
-const getCarDetail = async (CarId) => {
+const getCarDetail = async (carNumber) => {
     const car = await Car.findOne({
-        where: { isDeleted: false, id: CarId },
+        where: { isDeleted: false, number: carNumber },
     });
 
     if (!car) {
@@ -23,9 +23,9 @@ const getCarDetail = async (CarId) => {
     return car;
 };
 
-const getListCars = async (pageIndex, pageSize) => {
+const getListCars = async (pageIndex, pageSize, filter) => {
     const Cars = await Car.findAll({
-        where: { isDeleted: false },
+        where: { ...filter, isDeleted: false },
     });
 
     const totalCount = Cars.length;

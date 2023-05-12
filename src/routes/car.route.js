@@ -7,16 +7,17 @@ import {
     deleteCarController,
     uploadCarsController,
 } from "../controllers/car.controller.js";
-import { authJWT } from "../middlewares/auth.middleware.js";
 import multer from "multer";
+import { authJWT } from "../middlewares/auth.middleware.js";
+
 const upload = multer();
 
 const carRouter = express.Router();
 
 carRouter.get("/cars", getListCarsController);
-carRouter.get("/cars/:id", getCarDetailController);
+carRouter.get("/cars/:number", getCarDetailController);
 
-carRouter.post("/cars/upload", upload.single("file"), uploadCarsController);
+carRouter.post("/cars/upload", authJWT, upload.single("file"), uploadCarsController);
 carRouter.post("/cars", addCarController);
 
 carRouter.put("/cars/:id", updateCarController);

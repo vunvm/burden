@@ -24,8 +24,6 @@ for (const model of models) {
 applyExtraSetup(sequelize);
 
 // sync
-sequelize.sync({ alert: true }).then(() => {
-    console.log("Sync successfully.");
-});
+sequelize.sync({ alert: true }).then(() => {});
 
 export default sequelize;
