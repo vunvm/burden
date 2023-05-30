@@ -5,6 +5,7 @@ import {
     getListUsers,
     updateUser,
     inactiveUser,
+    getCentreInformation,
 } from "../services/user.service.js";
 import httpStatus from "http-status";
 import { createUserSchema, updateUserSchema, loginSchema } from "../validations/user.validation.js";
@@ -47,6 +48,15 @@ const updateUserController = async (req, res, next) => {
 
         const updatedUserId = await updateUser(req.params.id, value);
         return res.status(httpStatus.OK).json(updatedUserId);
+    } catch (error) {
+        next(error);
+    }
+};
+
+const getCentreInformationController = async (req, res, next) => {
+    try {
+        const user = await getCentreInformation(req.params.id);
+        return res.status(httpStatus.OK).json(user);
     } catch (error) {
         next(error);
     }
@@ -102,4 +112,5 @@ export {
     updateUserController,
     inactiveUserController,
     getCurrentUserController,
+    getCentreInformationController,
 };

@@ -5,7 +5,7 @@ import httpStatus from "http-status";
 import sequelize from "../models/index.js";
 import { ApiDataResponse, ApiPaginatedResponse } from "../helper/apiResponse.js";
 
-const { User } = sequelize.models;
+const { User, Car, Inspection, Owner } = sequelize.models;
 
 const login = async (payload) => {
     const user = await User.findOne({ where: { isDeleted: false, username: payload.username } });
@@ -48,6 +48,75 @@ const getUserDetail = async (userId) => {
     }
 
     return user;
+};
+
+const getCentreInformation = async (centreId) => {
+    const data = await Inspection.findAll({
+        where: {
+            isDeleted: false,
+            UserId: centreId,
+        },
+        include: [{ model: Car, include: [Owner] }],
+    });
+
+    const inspectionsSet = new Set();
+    const carsSet = new Set();
+    const ownersSet = new Set();
+
+    data.forEach((certificate) => {
+        // Add inspection to inspections array
+        inspectionsSet.add(
+            JSON.stringify({
+                id: certificate.id,
+                certificate: certificate.certificate,
+                expirationDate: certificate.expirationDate,
+                isDeleted: certificate.isDeleted,
+                createdAt: certificate.createdAt,
+                updatedAt: certificate.updatedAt,
+            })
+        );
+
+        // Add car to cars array
+        carsSet.add(
+            JSON.stringify({
+                id: certificate.Car.id,
+                number: certificate.Car.number,
+                registryCity: certificate.Car.registryCity,
+                automaker: certificate.Car.automaker,
+                model: certificate.Car.model,
+                engineType: certificate.Car.engineType,
+                fuelType: certificate.Car.fuelType,
+                purpose: certificate.Car.purpose,
+                isDeleted: certificate.Car.isDeleted,
+                createdAt: certificate.Car.createdAt,
+                updatedAt: certificate.Car.updatedAt,
+            })
+        );
+
+        // Add owner to owners array
+        ownersSet.add(
+            JSON.stringify({
+                id: certificate.Car.Owner.id,
+                type: certificate.Car.Owner.type,
+                name: certificate.Car.Owner.name,
+                address: certificate.Car.Owner.address,
+                isDeleted: certificate.Car.Owner.isDeleted,
+                createdAt: certificate.Car.Owner.createdAt,
+                updatedAt: certificate.Car.Owner.updatedAt,
+            })
+        );
+    });
+    const owners = Array.from(ownersSet).map((ownerString) => JSON.parse(ownerString));
+    const inspections = Array.from(inspectionsSet).map((ownerString) => JSON.parse(ownerString));
+    const cars = Array.from(carsSet).map((ownerString) => JSON.parse(ownerString));
+    // Output the result
+    const result = {
+        inspections,
+        cars,
+        owners,
+    };
+
+    return result;
 };
 
 const getListUsers = async (pageIndex, pageSize) => {
@@ -99,4 +168,12 @@ const inactiveUser = async (userId) => {
     return new ApiDataResponse(httpStatus.OK, "inactive success", inactivatedUser);
 };
 
-export { login, addUser, getUserDetail, getListUsers, updateUser, inactiveUser };
+export {
+    login,
+    addUser,
+    getUserDetail,
+    getListUsers,
+    updateUser,
+    inactiveUser,
+    getCentreInformation,
+};
