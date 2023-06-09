@@ -73,6 +73,81 @@ const getCentreInformation = async (centreId) => {
                 isDeleted: certificate.isDeleted,
                 createdAt: certificate.createdAt,
                 updatedAt: certificate.updatedAt,
+                carId: certificate.Car.id,
+                userId: centreId,
+            })
+        );
+
+        // Add car to cars array
+        carsSet.add(
+            JSON.stringify({
+                id: certificate.Car.id,
+                number: certificate.Car.number,
+                registryCity: certificate.Car.registryCity,
+                automaker: certificate.Car.automaker,
+                model: certificate.Car.model,
+                engineType: certificate.Car.engineType,
+                fuelType: certificate.Car.fuelType,
+                purpose: certificate.Car.purpose,
+                isDeleted: certificate.Car.isDeleted,
+                createdAt: certificate.Car.createdAt,
+                updatedAt: certificate.Car.updatedAt,
+            })
+        );
+
+        // Add owner to owners array
+        ownersSet.add(
+            JSON.stringify({
+                id: certificate.Car.Owner.id,
+                type: certificate.Car.Owner.type,
+                name: certificate.Car.Owner.name,
+                address: certificate.Car.Owner.address,
+                isDeleted: certificate.Car.Owner.isDeleted,
+                createdAt: certificate.Car.Owner.createdAt,
+                updatedAt: certificate.Car.Owner.updatedAt,
+            })
+        );
+    });
+    const owners = Array.from(ownersSet).map((ownerString) => JSON.parse(ownerString));
+    const inspections = Array.from(inspectionsSet).map((ownerString) => JSON.parse(ownerString));
+    const cars = Array.from(carsSet).map((ownerString) => JSON.parse(ownerString));
+    // Output the result
+    const result = {
+        inspections,
+        cars,
+        owners,
+    };
+
+    return result;
+};
+
+const getRegionInformation = async (region) => {
+    const data = await Inspection.findAll({
+        where: {
+            isDeleted: false,
+        },
+        include: [
+            { model: Car, include: [Owner] },
+            { model: User, where: { region } },
+        ],
+    });
+
+    const inspectionsSet = new Set();
+    const carsSet = new Set();
+    const ownersSet = new Set();
+
+    data.forEach((certificate) => {
+        // Add inspection to inspections array
+        inspectionsSet.add(
+            JSON.stringify({
+                id: certificate.id,
+                certificate: certificate.certificate,
+                expirationDate: certificate.expirationDate,
+                isDeleted: certificate.isDeleted,
+                createdAt: certificate.createdAt,
+                updatedAt: certificate.updatedAt,
+                carId: certificate.Car.id,
+                userId: centreId,
             })
         );
 
@@ -176,4 +251,5 @@ export {
     updateUser,
     inactiveUser,
     getCentreInformation,
+    getRegionInformation,
 };

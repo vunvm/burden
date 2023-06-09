@@ -4,7 +4,7 @@ import sequelize from "../models/index.js";
 import { Op } from "sequelize";
 import { ApiDataResponse, ApiPaginatedResponse } from "../helper/apiResponse.js";
 
-const { Inspection, User } = sequelize.models;
+const { Inspection, User, Car } = sequelize.models;
 
 const addInspection = async (payload) => {
     const newInspection = await Inspection.create(payload);
@@ -15,6 +15,7 @@ const addInspection = async (payload) => {
 const getInspectionDetail = async (InspectionId) => {
     const inspection = await Inspection.findOne({
         where: { isDeleted: false, id: InspectionId },
+        include: [User, Car],
     });
 
     if (!inspection) {
@@ -30,12 +31,12 @@ const getListInspections = async (expired, from, to, pageIndex, pageSize, addres
     if (expired) {
         inspections = await Inspection.findAll({
             where: { isDeleted: false, expirationDate: { [Op.gte]: from, [Op.lte]: to } },
-            include: [User],
+            include: [User, Car],
         });
     } else {
         inspections = await Inspection.findAll({
             where: { isDeleted: false, createdAt: { [Op.gte]: from, [Op.lte]: to } },
-            include: [User],
+            include: [User, Car],
         });
     }
 

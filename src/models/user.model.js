@@ -33,6 +33,10 @@ export default (sequelize) => {
             type: DataTypes.ENUM(["VRA", "VIC"]),
             allowNull: false,
         },
+        region: {
+            type: DataTypes.ENUM(["NOR", "MID", "SOU"]),
+            allowNull: false,
+        },
     };
 
     const timeConfig = {

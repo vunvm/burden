@@ -7,6 +7,7 @@ const createUserSchema = Joi.object({
     centreName: Joi.string().required(),
     address: Joi.string().required(),
     centreType: Joi.string().required().valid("VRA", "VIC"),
+    region: Joi.string().required().valid("NOR", "MID", "SOU"),
 });
 
 const updateUserSchema = Joi.object({
@@ -14,6 +15,7 @@ const updateUserSchema = Joi.object({
     centreName: Joi.string(),
     address: Joi.string(),
     centreType: Joi.string().valid("VRA", "VIC"),
+    region: Joi.string().required().valid("NOR", "MID", "SOU"),
 });
 
 const loginSchema = Joi.object({
