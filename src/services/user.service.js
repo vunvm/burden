@@ -147,7 +147,7 @@ const getRegionInformation = async (region) => {
                 createdAt: certificate.createdAt,
                 updatedAt: certificate.updatedAt,
                 carId: certificate.Car.id,
-                userId: centreId,
+                userId: certificate.User.id,
             })
         );
 
